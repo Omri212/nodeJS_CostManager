@@ -14,7 +14,7 @@ router.post('/add', async (req, res) => {
 
         // Check if all required fields are provided
         if (!userid || !category || !description || !sum) {
-            return res.status(400).json({ error: 'Missing required fields: user_id, category, description, sum' });
+            return res.status(400).json({ error: 'Missing required fields: userid, category, description, sum' });
         }
 
         // If date is not provided, use the current date and time
@@ -46,10 +46,10 @@ router.post('/add', async (req, res) => {
  * @access Public
  */
 router.get('/report', async (req, res) => {
-    const { id: user_id, year, month } = req.query;
+    const { id: userid, year, month } = req.query;
 
     // Validate input parameters
-    if (!user_id || !year || !month) {
+    if (!userid || !year || !month) {
         return res.status(400).json({ error: 'Missing required query parameters: id, year, month' });
     }
 
@@ -59,7 +59,7 @@ router.get('/report', async (req, res) => {
 
         // Fetch the costs within the month and year range
         const costs = await Cost.find({
-            user_id: user_id,
+            userid: userid,
             date: { $gte: startOfMonth, $lte: endOfMonth }
         });
 
@@ -87,7 +87,7 @@ router.get('/report', async (req, res) => {
 
         // Format the final report
         const report = {
-            userid: user_id,
+            userid: userid,
             year: parseInt(year),
             month: parseInt(month),
             costs: Object.keys(categories).map(category => ({ [category]: categories[category] }))
@@ -115,7 +115,7 @@ router.get('/users/:id', async (req, res) => {
 
         // Calculate total costs
         const totalCosts = await Cost.aggregate([
-            { $match: { user_id: userId } },
+            { $match: { userid: userId } },
             { $group: { _id: null, total: { $sum: '$sum' } } },
         ]);
 
