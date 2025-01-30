@@ -137,9 +137,9 @@ router.get('/users/:id', async (req, res) => {
  */
 router.get('/about', async (req, res) => {
     const team = [
-        { first_name: 'Omri', last_name: 'Shmuel', id: '318688652' },
-        { first_name: 'Omri', last_name: 'Shmuel', id: '318688652' },
-        { first_name: 'Omri', last_name: 'Shmuel', id: '318688652' },
+        { first_name: 'Omri', last_name: 'Shmuel'},
+        { first_name: 'Omer', last_name: 'Tzaadi' },
+        { first_name: 'Astewuol', last_name: 'Tsagaow' },
     ];
 
     res.json(team);
