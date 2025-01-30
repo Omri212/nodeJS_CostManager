@@ -10,10 +10,10 @@ const User = require('../models/users');
  */
 router.post('/add', async (req, res) => {
     try {
-        const { user_id, category, description, sum, date } = req.body;
+        const { userid, category, description, sum, date } = req.body;
 
         // Check if all required fields are provided
-        if (!user_id || !category || !description || !sum) {
+        if (!userid || !category || !description || !sum) {
             return res.status(400).json({ error: 'Missing required fields: user_id, category, description, sum' });
         }
 
@@ -22,7 +22,7 @@ router.post('/add', async (req, res) => {
 
         // Create a new cost item
         const cost = new Cost({
-            user_id,
+            userid,
             category,
             description,
             sum,
