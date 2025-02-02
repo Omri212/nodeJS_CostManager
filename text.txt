@@ -4,9 +4,9 @@ testing getting the about
 -------------------------
 url=https://nodejs-costmanager.onrender.com/api/about/
 data.status_code=200
-b'[{"first_name":"Omri","last_name":"Shmuel","id":"318688652"},{"first_name":"Omri","last_name":"Shmuel","id":"318688652"},{"first_name":"Omri","last_name":"Shmuel","id":"318688652"}]'
-data.text=[{"first_name":"Omri","last_name":"Shmuel","id":"318688652"},{"first_name":"Omri","last_name":"Shmuel","id":"318688652"},{"first_name":"Omri","last_name":"Shmuel","id":"318688652"}]
-[{'first_name': 'Omri', 'last_name': 'Shmuel', 'id': '318688652'}, {'first_name': 'Omri', 'last_name': 'Shmuel', 'id': '318688652'}, {'first_name': 'Omri', 'last_name': 'Shmuel', 'id': '318688652'}]
+b'[{"first_name":"Omri","last_name":"Shmuel"},{"first_name":"Omer","last_name":"Tzaadi"},{"first_name":"Astewuol","last_name":"Tsagaow"}]'
+data.text=[{"first_name":"Omri","last_name":"Shmuel"},{"first_name":"Omer","last_name":"Tzaadi"},{"first_name":"Astewuol","last_name":"Tsagaow"}]
+[{'first_name': 'Omri', 'last_name': 'Shmuel'}, {'first_name': 'Omer', 'last_name': 'Tzaadi'}, {'first_name': 'Astewuol', 'last_name': 'Tsagaow'}]
 
 
 testing getting the report - 1
@@ -22,7 +22,7 @@ testing adding cost item
 ----------------------------------
 url=https://nodejs-costmanager.onrender.com/api/add/
 data.status_code=201
-b'{"description":"milk 9","sum":8,"category":"food","userid":"123123","date":"2025-01-30T18:06:06.152Z","_id":"679bbf8e839007fc2df06591","__v":0}'
+b'{"description":"milk 9","sum":8,"category":"food","userid":"123123","date":"2025-01-30T18:57:58.686Z","_id":"679bcbb6650ecbb91d0e83d2","__v":0}'
 
 
 testing getting the report - 2

@@ -123,6 +123,7 @@ router.get('/users/:id', async (req, res) => {
             first_name: user.first_name,
             last_name: user.last_name,
             id: user.id,
+            marital_status: user.marital_status,
             total: totalCosts[0]?.total || 0,
         });
     } catch (error) {
