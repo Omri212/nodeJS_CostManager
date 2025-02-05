@@ -32,6 +32,13 @@ router.post('/add', async (req, res) => {
         // Save the new cost item to the database
         const savedCost = await cost.save();
 
+        //update total cost for the compute desine
+        await User.findOneAndUpdate(
+            {id:userid},
+            {$inc:{totalCost:sum}},
+            {new: true},
+
+        )
         // Respond with the newly added cost item
         res.status(201).json(savedCost);
     } catch (error) {
@@ -114,17 +121,14 @@ router.get('/users/:id', async (req, res) => {
         }
 
         // Calculate total costs
-        const totalCosts = await Cost.aggregate([
-            { $match: { userid: userId } },
-            { $group: { _id: null, total: { $sum: '$sum' } } },
-        ]);
+
 
         res.json({
             first_name: user.first_name,
             last_name: user.last_name,
             id: user.id,
             marital_status: user.marital_status,
-            total: totalCosts[0]?.total || 0,
+            total: user.total_cost,
         });
     } catch (error) {
         res.status(500).json({ error: error.message });

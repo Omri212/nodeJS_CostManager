@@ -11,7 +11,8 @@ const userSchema = new Schema({
     first_name: { type: String, required: true }, // User's frist name
     last_name: { type: String, required: true }, // User's last name
     birthday: { type: Date, required: true }, // Date of birht
-    marital_status: { type: String, required: true } // Marrital status (single, maried, etc.)
+    marital_status: { type: String, required: true }, // Marrital status (single, maried, etc.)
+    total_cost: { type: Number, default: 0 }
 });
 
 /**
