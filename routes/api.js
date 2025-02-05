@@ -35,7 +35,7 @@ router.post('/add', async (req, res) => {
         //update total cost for the compute desine
         await User.findOneAndUpdate(
             {id:userid},
-            {$inc:{totalCost:sum}},
+            {$inc:{total_cost:sum}},
             {new: true},
 
         )
