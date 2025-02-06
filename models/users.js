@@ -10,7 +10,7 @@ const userSchema = new Schema({
     id: { type: String, required: true }, // Unique user iD
     first_name: { type: String, required: true }, // User's frist name
     last_name: { type: String, required: true }, // User's last name
-    birthday: { type: Date, required: true }, // Date of birht
+    birthday: { type: Date, required: false }, // Date of birht
     marital_status: { type: String, required: true }, // Marrital status (single, maried, etc.)
     total_cost: { type: Number, default: 0 }
 });
