@@ -16,7 +16,9 @@ router.post('/add', async (req, res) => {
         if (!userid || !category || !description || !sum) {
             return res.status(400).json({ error: 'Missing required fields: userid, category, description, sum' });
         }
-
+        if (!['food', 'health', 'housing', 'sport', 'education', ''].includes(category)){
+            return res.status(400).json({ error: 'Category not supported.\n please choose from theis list: food, health, housing, sport, education, ' });
+        }
         // If date is not provided, use the current date and time
         const costDate = date ? new Date(date) : new Date();
 

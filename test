@@ -1,0 +1,43 @@
+https://nodejs-costmanager.onrender.com
+
+testing getting the about
+-------------------------
+url=https://nodejs-costmanager.onrender.com/api/about/
+data.status_code=200
+b'[{"first_name":"Omri","last_name":"Shmuel"},{"first_name":"Omer","last_name":"Tzaadi"},{"first_name":"Astewuol","last_name":"Tsagaow"}]'
+data.text=[{"first_name":"Omri","last_name":"Shmuel"},{"first_name":"Omer","last_name":"Tzaadi"},{"first_name":"Astewuol","last_name":"Tsagaow"}]
+[{'first_name': 'Omri', 'last_name': 'Shmuel'}, {'first_name': 'Omer', 'last_name': 'Tzaadi'}, {'first_name': 'Astewuol', 'last_name': 'Tsagaow'}]
+
+
+testing getting the report - 1
+------------------------------
+url=https://nodejs-costmanager.onrender.com/api/report/?id=123123&year=2025&month=2
+data.status_code=200
+b'{"userid":"123123","year":2025,"month":2,"costs":[{"food":[{"sum":8,"description":"milk 9","day":6}]},{"education":[]},{"health":[]},{"housing":[]}]}'
+data.text={"userid":"123123","year":2025,"month":2,"costs":[{"food":[{"sum":8,"description":"milk 9","day":6}]},{"education":[]},{"health":[]},{"housing":[]}]}
+
+
+
+testing adding cost item
+----------------------------------
+url=https://nodejs-costmanager.onrender.com/api/add/
+data.status_code=201
+b'{"description":"milk 9","sum":8,"category":"food","userid":"123123","date":"2025-02-06T19:32:17.733Z","_id":"67a50e41ec170178ab0bb7f7","__v":0}'
+
+
+testing getting the report - 2
+------------------------------
+url=https://nodejs-costmanager.onrender.com/api/report/?id=123123&year=2025&month=2
+data.status_code=200
+b'{"userid":"123123","year":2025,"month":2,"costs":[{"food":[{"sum":8,"description":"milk 9","day":6},{"sum":8,"description":"milk 9","day":6}]},{"education":[]},{"health":[]},{"housing":[]}]}'
+data.text={"userid":"123123","year":2025,"month":2,"costs":[{"food":[{"sum":8,"description":"milk 9","day":6},{"sum":8,"description":"milk 9","day":6}]},{"education":[]},{"health":[]},{"housing":[]}]}
+
+
+testing getting user
+------------------------------
+url=https://nodejs-costmanager.onrender.com/api/users/123123
+data.status_code=200
+b'{"first_name":"mosh","last_name":"israeli","id":"123123","marital_status":"single","total":16}'
+data.text={"first_name":"mosh","last_name":"israeli","id":"123123","marital_status":"single","total":16}
+
+

@@ -146,3 +146,35 @@ except Exception as e:
   print(e)
 
 print("")
+
+print("testing getting user")
+
+print("------------------------------")
+
+try:
+
+  text = ""
+
+  #getting the report
+
+  url = line + "/api/users/123123"
+
+  data = requests.get(url)
+
+  print("url="+url)
+
+  print("data.status_code="+str(data.status_code))
+
+  print(data.content)
+
+  print("data.text="+data.text)
+
+  print(text)
+
+except Exception as e:
+
+  print("problem")
+
+  print(e)
+
+print("")

@@ -7,10 +7,10 @@ const Schema = mongoose.Schema;
  */
 
 const costSchema = new Schema({
-    description: { type: String, required: true }, // Short desciption of the cost
+    description: { type: String, required: true }, // Short description of the cost
     sum: { type: Number, required: true }, // The amount spent
-    category: { type: String }, // Category of expense (e.g., food, education, etc.)
-    userid: { type: String, required: true }, // ID of the user associated with the cost
+    category: { type: String, enum: ['food', 'health', 'housing', 'sport', 'education', ''], required: true }, // Category of expense
+    userid: { type: Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the user
     date: { type: Date, default: Date.now } // Date of the expense (defaults to now)
 });
 
