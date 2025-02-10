@@ -14,7 +14,7 @@ router.post('/add', async (req, res) => {
 
         // Check if all required fields are provided
         if (!userid  || !description || !sum) {
-            return res.status(400).json({ error: 'Missing required fields: userid, category, description, sum' });
+            return res.status(400).json({ error: 'Missing required fields: userid, description, sum' });
         }
         if (!['food', 'health', 'housing', 'sport', 'education', ''].includes(category)){
             return res.status(400).json({ error: 'Category not supported. please choose from theis list: food, health, housing, sport, education or leave it blank ' });
