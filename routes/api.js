@@ -2,71 +2,72 @@ const express = require('express');
 const router = express.Router();
 const Cost = require('../models/costs');
 const User = require('../models/users');
-
+const report = require('../models/reports');
 /**
  * @route POST /api/add
- * @desc Adds a new cost entry for a user
+ * @desc Adds a new cost entry and deletes the existing report for that month/year if it exists
  * @access Public
  */
 router.post('/add', async (req, res) => {
     try {
         const { userid, category, description, sum, date } = req.body;
 
-        // Check if all required fields are provided
-        if (!userid  || !description || !sum) {
+        if (!userid || !description || !sum) {
             return res.status(400).json({ error: 'Missing required fields: userid, description, sum' });
         }
-        if (!['food', 'health', 'housing', 'sport', 'education', ''].includes(category)){
-            return res.status(400).json({ error: 'Category not supported. please choose from theis list: food, health, housing, sport, education or leave it blank ' });
+
+        if (!['food', 'health', 'housing', 'sport', 'education'].includes(category)) {
+            return res.status(400).json({ error: 'Category not supported. Please choose from: food, health, housing, sport, education' });
         }
-        // If date is not provided, use the current date and time
+
         const costDate = date ? new Date(date) : new Date();
-
-        // Create a new cost item
-        const cost = new Cost({
-            userid,
-            category,
-            description,
-            sum,
-            date: costDate
-        });
-
-        // Save the new cost item to the database
+        const cost = new Cost({ userid, category, description, sum, date: costDate });
         const savedCost = await cost.save();
 
-        //update total cost for the compute desine
-        await User.findOneAndUpdate(
-            {id:userid},
-            {$inc:{total_cost:sum}},
-            {new: true},
+        // Delete existing report for this user, month, and year (invalidate cache)
+        const year = costDate.getFullYear();
+        const month = costDate.getMonth() + 1; // Get correct month
 
-        )
-        // Respond with the newly added cost item
+        await report.findOneAndDelete({ userid, year, month });
+
+        // Update total cost for the user
+        await User.findOneAndUpdate(
+            { id: userid },
+            { $inc: { total_cost: sum } },
+            { new: true }
+        );
+
         res.status(201).json(savedCost);
     } catch (error) {
-        // Catch any errors and return them
         res.status(500).json({ error: error.message });
     }
 });
 
+
 /**
  * @route GET /api/report
- * @desc Fetches monthly report for a specific user
+ * @desc Fetches monthly report for a specific user, returns from cache if available
  * @access Public
  */
 router.get('/report', async (req, res) => {
     const { id: userid, year, month } = req.query;
 
-    // Validate input parameters
     if (!userid || !year || !month) {
         return res.status(400).json({ error: 'Missing required query parameters: id, year, month' });
     }
 
     try {
-        const startOfMonth = new Date(year, month - 1, 1); // Start of month
-        const endOfMonth = new Date(year, month, 0);       // End of month
+        // Check if a report already exists in the reports collection
+        const existingReport = await report.findOne({ userid, year, month });
 
-        // Fetch the costs within the month and year range
+        if (existingReport) {
+            return res.json(existingReport); // Return cached report if found
+        }
+
+        // If no existing report, generate a new one
+        const startOfMonth = new Date(year, month - 1, 1);
+        const endOfMonth = new Date(year, month, 0);
+
         const costs = await Cost.find({
             userid: userid,
             date: { $gte: startOfMonth, $lte: endOfMonth }
@@ -76,33 +77,30 @@ router.get('/report', async (req, res) => {
             return res.status(404).json({ error: 'No costs found for this user in the specified month and year' });
         }
 
-        // Prepare the response structure
+        // Categorize costs
         const categories = {
             food: [],
             education: [],
             health: [],
-            housing: []
+            housing: [],
+            sport: []
         };
 
-        // Group costs by category
         costs.forEach(cost => {
             const { category, sum, description, date } = cost;
-            const day = new Date(date).getDate(); // Extract the day
-
+            const day = new Date(date).getDate();
             if (categories[category]) {
                 categories[category].push({ sum, description, day });
             }
         });
 
-        // Format the final report
-        const report = {
-            userid: userid,
-            year: parseInt(year),
-            month: parseInt(month),
-            costs: Object.keys(categories).map(category => ({ [category]: categories[category] }))
-        };
+        const reportData = { userid, year, month, costs: categories };
 
-        res.json(report);
+        // Save report to the database
+        const newReport = new report(reportData);
+        await newReport.save();
+
+        res.json(reportData);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
