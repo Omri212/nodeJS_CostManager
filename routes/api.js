@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Cost = require('../models/costs');
 const User = require('../models/users');
-const report = require('../models/reports');
+const Report = require('../models/reports');
 /**
  * @route POST /api/add
  * @desc Adds a new cost entry and deletes the existing report for that month/year if it exists
@@ -28,7 +28,7 @@ router.post('/add', async (req, res) => {
         const year = costDate.getFullYear();
         const month = costDate.getMonth() + 1; // Get correct month
 
-        await report.findOneAndDelete({ userid, year, month });
+        await Report.findOneAndDelete({ userid, year, month });
 
         // Update total cost for the user
         await User.findOneAndUpdate(
@@ -58,7 +58,7 @@ router.get('/report', async (req, res) => {
 
     try {
         // Check if a report already exists in the reports collection
-        const existingReport = await report.findOne({ userid, year, month });
+        const existingReport = await Report.findOne({ userid, year, month });
 
         if (existingReport) {
             return res.json(existingReport); // Return cached report if found
@@ -97,7 +97,7 @@ router.get('/report', async (req, res) => {
         const reportData = { userid, year, month, costs: categories };
 
         // Save report to the database
-        const newReport = new report(reportData);
+        const newReport = new Report(reportData);
         await newReport.save();
 
         res.json(reportData);
