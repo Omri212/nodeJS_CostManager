@@ -1,0 +1,52 @@
+https://nodejs-costmanager.onrender.com
+
+testing getting the about
+-------------------------
+url=https://nodejs-costmanager.onrender.com/api/about/
+data.status_code=200
+data.text=[{"first_name":"Omri","last_name":"Shmuel"},{"first_name":"Omer","last_name":"Tzaadi"},{"first_name":"Astewuol","last_name":"Tsagaow"}]
+[{'first_name': 'Omri', 'last_name': 'Shmuel'}, {'first_name': 'Omer', 'last_name': 'Tzaadi'}, {'first_name': 'Astewuol', 'last_name': 'Tsagaow'}]
+
+testing getting the report - before adding cost
+----------------------------------------------
+url=https://nodejs-costmanager.onrender.com/api/report/?id=123123&year=2025&month=2
+data.status_code=404
+data.text={"error":"No costs found for this user in the specified month and year"}
+
+testing adding cost item
+-------------------------
+url=https://nodejs-costmanager.onrender.com/api/add/
+data.status_code=201
+data.text={"description":"milk 9","sum":8,"category":"food","userid":"123123","date":"2025-02-12T11:02:14.024Z","_id":"67ac7fb6636313bd154a1d61","__v":0}
+
+testing getting the report - after adding cost
+----------------------------------------------
+url=https://nodejs-costmanager.onrender.com/api/report/?id=123123&year=2025&month=2
+data.status_code=200
+data.text={"userid":"123123","year":"2025","month":"2","costs":{"food":[{"sum":8,"description":"milk 9","day":12}],"education":[],"health":[],"housing":[],"sport":[]}}
+
+testing checking if report was deleted before adding new cost
+--------------------------------------------------------------
+url=https://nodejs-costmanager.onrender.com/api/report/?id=123123&year=2025&month=2
+data.status_code=200
+data.text={"_id":"67ac7fb7636313bd154a1d67","userid":"123123","year":2025,"month":2,"costs":{"food":[{"sum":8,"description":"milk 9","day":12}],"education":[],"health":[],"housing":[],"sport":[]},"createdAt":"2025-02-12T11:02:15.922Z","updatedAt":"2025-02-12T11:02:15.922Z","__v":0}
+
+testing adding cost item with specific date
+--------------------------------------------
+url=https://nodejs-costmanager.onrender.com/api/add/
+data.status_code=201
+data.text={"description":"Gym Membership","sum":30,"category":"sport","userid":"123123","date":"2025-02-10T10:00:00.000Z","_id":"67ac7fb8636313bd154a1d6a","__v":0}
+
+testing adding cost with invalid category
+------------------------------------------
+url=https://nodejs-costmanager.onrender.com/api/add/
+data.status_code=400
+data.text={"error":"Category not supported. Please choose from: food, health, housing, sport, education"}
+
+testing getting user details
+------------------------------
+url=https://nodejs-costmanager.onrender.com/api/users/123123
+data.status_code=200
+data.text={"first_name":"mosh","last_name":"israeli","id":"123123","marital_status":"single","total":38}
+
+All tests completed successfully!

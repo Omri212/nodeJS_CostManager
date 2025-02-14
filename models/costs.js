@@ -10,7 +10,7 @@ const costSchema = new Schema({
     description: { type: String, required: true }, // Short description of the cost
     sum: { type: Number, required: true }, // The amount spent
     category: { type: String, enum: ['food', 'health', 'housing', 'sport', 'education', ''], required: false ,default: ""}, // Category of expense
-    userid: { type: String, ref: 'User', required: true }, // Reference to the user
+    userid: { type: Number, ref: 'User', required: true }, // Reference to the user
     date: { type: Date, default: Date.now } // Date of the expense (defaults to now)
 });
 

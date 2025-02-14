@@ -21,19 +21,26 @@ router.post('/add', async (req, res) => {
         }
 
         const costDate = date ? new Date(date) : new Date();
-        const cost = new Cost({ userid, category, description, sum, date: costDate });
+        const cost = new Cost({
+            userid: Number(userid),
+            category,
+            description,
+            sum: Number(sum),
+            date: costDate
+        });
+
         const savedCost = await cost.save();
 
-        // Delete existing report for this user, month, and year (invalidate cache)
+        // Delete existing report for this user, month, and year
         const year = costDate.getFullYear();
-        const month = costDate.getMonth() + 1; // Get correct month
+        const month = costDate.getMonth() + 1;
 
-        await Report.findOneAndDelete({ userid, year, month });
+        await Report.findOneAndDelete({ userid: Number(userid), year, month });
 
         // Update total cost for the user
         await User.findOneAndUpdate(
-            { id: userid },
-            { $inc: { total_cost: sum } },
+            { id: Number(userid) },
+            { $inc: { total_cost: Number(sum) } },
             { new: true }
         );
 
@@ -44,32 +51,33 @@ router.post('/add', async (req, res) => {
 });
 
 
+
 /**
  * @route GET /api/report
  * @desc Fetches monthly report for a specific user, returns from cache if available
  * @access Public
  */
 router.get('/report', async (req, res) => {
-    const { id: userid, year, month } = req.query;
+    const userid = Number(req.query.id);
+    const year = Number(req.query.year);
+    const month = Number(req.query.month);
 
     if (!userid || !year || !month) {
         return res.status(400).json({ error: 'Missing required query parameters: id, year, month' });
     }
 
     try {
-        // Check if a report already exists in the reports collection
         const existingReport = await Report.findOne({ userid, year, month });
 
         if (existingReport) {
-            return res.json(existingReport); // Return cached report if found
+            return res.json(existingReport);
         }
 
-        // If no existing report, generate a new one
         const startOfMonth = new Date(year, month - 1, 1);
         const endOfMonth = new Date(year, month, 0);
 
         const costs = await Cost.find({
-            userid: userid,
+            userid,
             date: { $gte: startOfMonth, $lte: endOfMonth }
         });
 
@@ -77,14 +85,7 @@ router.get('/report', async (req, res) => {
             return res.status(404).json({ error: 'No costs found for this user in the specified month and year' });
         }
 
-        // Categorize costs
-        const categories = {
-            food: [],
-            education: [],
-            health: [],
-            housing: [],
-            sport: []
-        };
+        const categories = { food: [], education: [], health: [], housing: [], sport: [] };
 
         costs.forEach(cost => {
             const { category, sum, description, date } = cost;
@@ -96,7 +97,6 @@ router.get('/report', async (req, res) => {
 
         const reportData = { userid, year, month, costs: categories };
 
-        // Save report to the database
         const newReport = new Report(reportData);
         await newReport.save();
 
@@ -106,34 +106,34 @@ router.get('/report', async (req, res) => {
     }
 });
 
+
 /**
  * @route GET /api/users/:id
  * @desc Retrieves user details and their total spending
  * @access Public
  */
 router.get('/users/:id', async (req, res) => {
-    const userId = req.params.id;
+    const userId = Number(req.params.id);
 
     try {
         const user = await User.findOne({ id: userId });
+
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-
-        // Calculate total costs
-
 
         res.json({
             first_name: user.first_name,
             last_name: user.last_name,
             id: user.id,
             marital_status: user.marital_status,
-            total: user.total_cost,
+            total: user.total_cost
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
+
 
 /**
  * @route GET /api/about
